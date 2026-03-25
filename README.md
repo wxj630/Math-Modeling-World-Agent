@@ -149,3 +149,7 @@ python -m pytest -q
 
 - 本项目聚焦“后端工作流同构”，不包含前端/Redis/WebSocket 复刻。
 - Prompt 以 `src/mmw_agent/prompts` 为准，保持与参考仓库一致。
+
+# Acknowledgements
+- https://github.com/openonion/connectonion
+- https://github.com/jihe520/MathModelAgent
