@@ -1,0 +1,1 @@
+recursive-include src/mmw_agent/config *.toml
