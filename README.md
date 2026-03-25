@@ -13,6 +13,7 @@
   - `notebook.ipynb`（实时代码执行记录）
   - `res.json`（章节中间结果）
   - `res.md`（最终论文 Markdown）
+- `session_state.json`（服务端落盘 session/checkpoint，可断点续跑）
 - 自动启动 Jupyter Notebook（默认 `0.0.0.0:8888`，默认无 token，默认任务结束后保留进程）
 
 ## 项目结构
@@ -144,11 +145,47 @@ python -m pytest -q
 - Local interpreter 执行与 notebook 写入
 - Coder 错误重试
 - CLI smoke
+- server-side session store / resume
 
 ## 说明
 
 - 本项目聚焦“后端工作流同构”，不包含前端/Redis/WebSocket 复刻。
 - Prompt 以 `src/mmw_agent/prompts` 为准，保持与参考仓库一致。
+
+## 断线恢复（Server-Side Session）
+
+你不使用 connectonion client 的 localStorage session 时，可直接使用本项目的服务端落盘恢复机制：
+
+- 每个任务目录会生成 `session_state.json`
+- Workflow 每完成一个关键阶段就 checkpoint 一次
+- 支持断点续跑，避免从头重跑浪费 token
+
+### 方式 1：`run` 时启用 resume
+
+```bash
+mmw-agent run \
+  --task-id <existing_task_id> \
+  --problem-file <same_problem_file> \
+  --data-dir <same_data_dir> \
+  --output-dir <same_output_root> \
+  --resume
+```
+
+### 方式 2：直接 `resume`（推荐）
+
+```bash
+mmw-agent resume \
+  --task-id <existing_task_id> \
+  --output-dir <same_output_root>
+```
+
+`resume` 会直接从 `<output_dir>/<task_id>/session_state.json` 读取：
+- problem
+- data_dir
+- 各角色会话状态
+- 已完成 stage 与章节输出
+
+然后从未完成阶段继续执行。
 
 # Acknowledgements
 - https://github.com/openonion/connectonion

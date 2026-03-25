@@ -37,6 +37,9 @@ class UserOutput:
             "footnotes": writer_response.footnotes,
         }
 
+    def load_res(self, res: dict[str, dict] | None) -> None:
+        self.res = res or {}
+
     def get_res(self) -> dict[str, dict]:
         return self.res
 

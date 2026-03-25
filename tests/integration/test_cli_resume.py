@@ -4,16 +4,9 @@ from mmw_agent.cli import main
 from mmw_agent.schemas.request import WorkflowResult
 
 
-def test_cli_smoke(monkeypatch, tmp_path: Path, capsys):
-    problem = tmp_path / "problem.md"
-    data_dir = tmp_path / "data"
-    output_dir = tmp_path / "outputs"
-    data_dir.mkdir()
-    output_dir.mkdir()
-    problem.write_text("mock problem", encoding="utf-8")
-
-    def fake_run_math_modeling(**kwargs):
-        task_dir = output_dir / "task-1"
+def test_cli_resume(monkeypatch, tmp_path: Path, capsys):
+    def fake_resume_math_modeling(**kwargs):
+        task_dir = tmp_path / "task-1"
         task_dir.mkdir(exist_ok=True)
         notebook = task_dir / "notebook.ipynb"
         res_md = task_dir / "res.md"
@@ -31,23 +24,13 @@ def test_cli_smoke(monkeypatch, tmp_path: Path, capsys):
             jupyter_port=8888,
             jupyter_url="http://0.0.0.0:8888/tree",
             session_state_path=str(task_dir / "session_state.json"),
-            resumed=False,
+            resumed=True,
         )
 
-    monkeypatch.setattr("mmw_agent.cli.run_math_modeling", fake_run_math_modeling)
+    monkeypatch.setattr("mmw_agent.cli.resume_math_modeling", fake_resume_math_modeling)
 
-    code = main(
-        [
-            "run",
-            "--problem-file",
-            str(problem),
-            "--data-dir",
-            str(data_dir),
-            "--output-dir",
-            str(output_dir),
-        ]
-    )
+    code = main(["resume", "--task-id", "task-1", "--output-dir", str(tmp_path)])
     out = capsys.readouterr().out
+
     assert code == 0
-    assert "Task ID: task-1" in out
-    assert "Jupyter:" in out
+    assert "Resumed: True" in out

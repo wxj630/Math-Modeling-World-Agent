@@ -73,3 +73,9 @@ class RoleAgentBase:
             plugins=plugins,
         )
 
+    def export_session(self) -> dict[str, Any] | None:
+        return getattr(self.agent, "current_session", None)
+
+    def import_session(self, session: dict[str, Any] | None) -> None:
+        if session:
+            self.agent.current_session = session

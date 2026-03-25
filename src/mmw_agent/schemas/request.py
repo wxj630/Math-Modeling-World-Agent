@@ -19,3 +19,5 @@ class WorkflowResult(BaseModel):
     jupyter_host: str
     jupyter_port: int
     jupyter_url: str
+    session_state_path: str
+    resumed: bool = False
