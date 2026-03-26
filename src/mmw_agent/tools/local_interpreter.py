@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import textwrap
 from pathlib import Path
 
 import jupyter_client
@@ -21,13 +22,122 @@ class LocalCodeInterpreter(BaseCodeInterpreter):
         self._pre_execute_code()
 
     def _pre_execute_code(self) -> None:
-        init_code = (
-            "import os\n"
-            f"work_dir = r'{self.work_dir}'\n"
-            "os.makedirs(work_dir, exist_ok=True)\n"
-            "os.chdir(work_dir)\n"
-            "print('Current working directory:', os.getcwd())\n"
+        escaped_work_dir = self.work_dir.replace("\\", "\\\\").replace("'", "\\'")
+        init_code = textwrap.dedent(
+            """
+            import os
+            from pathlib import Path
+
+            work_dir = r'__MMW_WORK_DIR__'
+            os.makedirs(work_dir, exist_ok=True)
+            os.chdir(work_dir)
+            print('Current working directory:', os.getcwd())
+
+            def _mmw_enable_chinese_fonts():
+                try:
+                    import matplotlib.pyplot as plt
+                    from matplotlib import font_manager as fm
+                except Exception as e:
+                    print(f"[mmw] matplotlib init skipped: {e}")
+                    return None
+
+                candidates = [
+                    # macOS
+                    "PingFang SC", "Hiragino Sans GB", "Songti SC", "Heiti SC", "STHeiti", "Arial Unicode MS",
+                    # Windows
+                    "Microsoft YaHei", "SimHei", "SimSun", "KaiTi", "FangSong", "NSimSun", "DengXian",
+                    # Linux
+                    "Noto Sans CJK SC", "Noto Sans SC", "WenQuanYi Zen Hei", "WenQuanYi Micro Hei",
+                    "Source Han Sans SC", "Source Han Sans CN", "AR PL UMing CN", "AR PL UKai CN",
+                ]
+
+                font_paths = []
+                custom_font = os.getenv("MMW_CHINESE_FONT_PATH", "").strip()
+                if custom_font:
+                    font_paths.append(Path(custom_font).expanduser())
+
+                font_paths.extend(
+                    [
+                        Path(work_dir) / "fonts" / "NotoSansCJKsc-Regular.otf",
+                        Path(work_dir) / "fonts" / "NotoSansSC-Regular.otf",
+                        Path.home() / ".mmw_agent" / "fonts" / "NotoSansCJKsc-Regular.otf",
+                        Path.home() / ".mmw_agent" / "fonts" / "NotoSansSC-Regular.otf",
+                        Path.home() / ".cache" / "mmw_agent" / "fonts" / "NotoSansCJKsc-Regular.otf",
+                        Path.home() / ".cache" / "mmw_agent" / "fonts" / "NotoSansSC-Regular.otf",
+                    ]
+                )
+
+                for font_path in font_paths:
+                    if not font_path.exists():
+                        continue
+                    try:
+                        fm.fontManager.addfont(str(font_path))
+                        name = fm.FontProperties(fname=str(font_path)).get_name()
+                        if name and name not in candidates:
+                            candidates.insert(0, name)
+                    except Exception:
+                        continue
+
+                available = {f.name for f in fm.fontManager.ttflist}
+                selected = next((name for name in candidates if name in available), None)
+
+                sans = []
+                if selected:
+                    sans.append(selected)
+                sans.extend([name for name in candidates if name in available and name not in sans])
+                sans.append("DejaVu Sans")
+
+                seen = set()
+                sans_unique = []
+                for name in sans:
+                    if name in seen:
+                        continue
+                    sans_unique.append(name)
+                    seen.add(name)
+
+                plt.rcParams["font.family"] = "sans-serif"
+                plt.rcParams["font.sans-serif"] = sans_unique
+                plt.rcParams["axes.unicode_minus"] = False
+                return selected or sans_unique[0]
+
+            def mmw_plot_style():
+                # Keep this as a reusable helper for generated code cells.
+                selected_font = _mmw_enable_chinese_fonts()
+                try:
+                    import matplotlib.pyplot as plt
+                    import seaborn as sns
+
+                    plt.rcParams.update(
+                        {
+                            "font.size": 11,
+                            "axes.titlesize": 12,
+                            "axes.titleweight": "bold",
+                            "axes.labelsize": 11,
+                            "axes.linewidth": 1.2,
+                            "axes.spines.top": False,
+                            "axes.spines.right": False,
+                            "xtick.labelsize": 10,
+                            "ytick.labelsize": 10,
+                            "legend.fontsize": 10,
+                            "legend.frameon": False,
+                            "figure.dpi": 300,
+                            "savefig.dpi": 300,
+                            "savefig.bbox": "tight",
+                            "savefig.pad_inches": 0.1,
+                        }
+                    )
+                    sns.set_theme(style="ticks")
+                    # seaborn set_theme can mutate rcParams; apply CJK fallback again.
+                    _mmw_enable_chinese_fonts()
+                except Exception:
+                    pass
+                return selected_font
+
+            _mmw_selected_font = mmw_plot_style()
+            print("[mmw] Matplotlib CJK font:", _mmw_selected_font)
+            """
         )
+        init_code = init_code.replace("__MMW_WORK_DIR__", escaped_work_dir)
         self.execute_code_raw(init_code)
 
     def execute_code(self, code: str) -> CodeExecutionResult:

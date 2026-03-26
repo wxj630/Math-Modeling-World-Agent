@@ -78,6 +78,10 @@ uv pip install -e .
 - `JUPYTER_NO_TOKEN`（默认 `true`）
 - `JUPYTER_KEEP_ALIVE`（默认 `true`）
 
+可选绘图中文字体配置：
+
+- `MMW_CHINESE_FONT_PATH`（可选，自定义中文字体文件路径，如 `.ttf/.otf`，用于 Linux 精简环境无中文系统字体时兜底）
+
 可选插件配置：
 
 - `MMW_DEFAULT_PLUGINS`

@@ -16,6 +16,8 @@ Core objectives:
 
 Execution rules:
 - Use the execute_code tool to run code.
+- Before plotting, call `mmw_plot_style()` when available (runtime preloaded) to ensure Chinese labels render on macOS/Windows/Linux.
+- Do not force `font.family='Arial'`; keep runtime font fallback chain.
 - If there is an error, self-correct and retry.
 - Do not ask user for next steps.
 - After each major section, print:
@@ -28,4 +30,3 @@ Visualization minimum:
 - parameter sensitivity/shape change plot
 - at least one simulation or hypothesis-testing demo figure
 """
-

@@ -20,3 +20,32 @@ def test_local_interpreter_executes_and_writes_notebook(tmp_path: Path):
     finally:
         interp.cleanup()
 
+
+def test_local_interpreter_chinese_plot_style_available(tmp_path: Path):
+    serializer = NotebookSerializer(work_dir=tmp_path)
+    interp = LocalCodeInterpreter(work_dir=str(tmp_path), notebook_serializer=serializer)
+    interp.initialize()
+    try:
+        result = interp.execute_code(
+            "\n".join(
+                [
+                    "import matplotlib.pyplot as plt",
+                    "print('HAS_MMW_STYLE', callable(globals().get('mmw_plot_style')))",
+                    "if 'mmw_plot_style' in globals():",
+                    "    print('FONT_USED', mmw_plot_style())",
+                    "plt.figure()",
+                    "plt.plot([1, 2, 3], [1, 4, 9])",
+                    "plt.title('中文标题')",
+                    "plt.xlabel('横轴')",
+                    "plt.ylabel('纵轴')",
+                    "plt.savefig('cn_plot.png')",
+                    "print('SAVED', 'cn_plot.png')",
+                ]
+            )
+        )
+        assert "HAS_MMW_STYLE" in result.text_to_model
+        assert "True" in result.text_to_model
+        assert not result.error_occurred
+        assert (tmp_path / "cn_plot.png").exists()
+    finally:
+        interp.cleanup()
