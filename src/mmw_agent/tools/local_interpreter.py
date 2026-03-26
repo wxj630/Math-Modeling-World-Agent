@@ -49,6 +49,7 @@ class LocalCodeInterpreter(BaseCodeInterpreter):
                     # Linux
                     "Noto Sans CJK SC", "Noto Sans SC", "WenQuanYi Zen Hei", "WenQuanYi Micro Hei",
                     "Source Han Sans SC", "Source Han Sans CN", "AR PL UMing CN", "AR PL UKai CN",
+                    "Noto Sans CJK JP", "Noto Sans CJK TC", "Noto Sans CJK KR",
                 ]
 
                 font_paths = []
@@ -98,7 +99,13 @@ class LocalCodeInterpreter(BaseCodeInterpreter):
                 plt.rcParams["font.family"] = "sans-serif"
                 plt.rcParams["font.sans-serif"] = sans_unique
                 plt.rcParams["axes.unicode_minus"] = False
-                return selected or sans_unique[0]
+                effective = selected or sans_unique[0]
+                if selected is None:
+                    print(
+                        "[mmw] WARNING: No CJK font found; Chinese may render as squares. "
+                        "Set MMW_CHINESE_FONT_PATH to a local .ttf/.otf."
+                    )
+                return effective
 
             def mmw_plot_style():
                 # Keep this as a reusable helper for generated code cells.
@@ -132,6 +139,19 @@ class LocalCodeInterpreter(BaseCodeInterpreter):
                 except Exception:
                     pass
                 return selected_font
+
+            # Register a runtime module so generated code can safely do:
+            #   from mmw_tools import mmw_plot_style
+            try:
+                import sys
+                import types
+
+                _mmw_tools_mod = types.ModuleType("mmw_tools")
+                _mmw_tools_mod.mmw_plot_style = mmw_plot_style
+                _mmw_tools_mod._mmw_enable_chinese_fonts = _mmw_enable_chinese_fonts
+                sys.modules["mmw_tools"] = _mmw_tools_mod
+            except Exception:
+                pass
 
             _mmw_selected_font = mmw_plot_style()
             print("[mmw] Matplotlib CJK font:", _mmw_selected_font)

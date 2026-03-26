@@ -17,6 +17,7 @@ setup(
         "ansi2html>=1.9.0",
         "pydantic>=2.0.0",
         "pydantic-settings>=2.0.0",
+        "json-repair>=0.39.0",
         "requests>=2.31.0",
         "tomli>=2.0.1; python_version < '3.11'",
     ],

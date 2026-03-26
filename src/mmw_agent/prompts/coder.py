@@ -72,9 +72,13 @@ df['\\u5a74\\u513f\\u884c\\u4e3a\\u7279\\u5f81']  # No unicode escapes
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# Runtime 里预置了跨平台中文字体配置函数，优先调用
-if "mmw_plot_style" in globals():
-    mmw_plot_style()
+# 统一中文字体配置：优先 mmw_tools，其次 runtime 预置函数
+try:
+    from mmw_tools import mmw_plot_style as _mmw_plot_style
+    _mmw_plot_style()
+except Exception:
+    if "mmw_plot_style" in globals():
+        mmw_plot_style()
 
 plt.rcParams.update({{
     'font.size': 11,
@@ -96,8 +100,12 @@ plt.rcParams.update({{
 plt.rcParams['axes.unicode_minus'] = False
 sns.set_theme(style='ticks')
 # 避免 set_theme 后重置字体，确保中文可显示
-if "mmw_plot_style" in globals():
-    mmw_plot_style()
+try:
+    from mmw_tools import mmw_plot_style as _mmw_plot_style
+    _mmw_plot_style()
+except Exception:
+    if "mmw_plot_style" in globals():
+        mmw_plot_style()
 
 COLORS = {{
     'primary': '#2E5B88',

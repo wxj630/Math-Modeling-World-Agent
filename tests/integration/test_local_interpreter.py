@@ -49,3 +49,24 @@ def test_local_interpreter_chinese_plot_style_available(tmp_path: Path):
         assert (tmp_path / "cn_plot.png").exists()
     finally:
         interp.cleanup()
+
+
+def test_local_interpreter_can_import_mmw_tools_module(tmp_path: Path):
+    serializer = NotebookSerializer(work_dir=tmp_path)
+    interp = LocalCodeInterpreter(work_dir=str(tmp_path), notebook_serializer=serializer)
+    interp.initialize()
+    try:
+        result = interp.execute_code(
+            "\n".join(
+                [
+                    "from mmw_tools import mmw_plot_style",
+                    "font_name = mmw_plot_style()",
+                    "print('IMPORTED_OK', bool(font_name))",
+                ]
+            )
+        )
+        assert "IMPORTED_OK" in result.text_to_model
+        assert "True" in result.text_to_model
+        assert not result.error_occurred
+    finally:
+        interp.cleanup()

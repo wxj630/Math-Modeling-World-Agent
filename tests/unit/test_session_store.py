@@ -21,3 +21,11 @@ def test_session_store_save_and_load(tmp_path: Path):
     assert loaded["task_id"] == "task-1"
     assert loaded["stages"]["coordinator_done"] is True
     assert store.path.exists()
+
+
+def test_session_store_load_with_repair_fallback(tmp_path: Path):
+    store = WorkflowSessionStore(work_dir=tmp_path)
+    store.path.write_text('{"task_id":"task-2",}', encoding="utf-8")
+    loaded = store.load()
+    assert loaded is not None
+    assert loaded["task_id"] == "task-2"

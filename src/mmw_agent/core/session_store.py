@@ -5,6 +5,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from mmw_agent.utils import repair_json
+
 
 class WorkflowSessionStore:
     def __init__(self, work_dir: str | Path, filename: str = "session_state.json"):
@@ -68,7 +70,18 @@ class WorkflowSessionStore:
     def load(self) -> dict[str, Any] | None:
         if not self.path.exists():
             return None
-        return json.loads(self.path.read_text(encoding="utf-8"))
+        text = self.path.read_text(encoding="utf-8")
+        try:
+            obj = json.loads(text)
+            if isinstance(obj, dict):
+                return obj
+        except json.JSONDecodeError:
+            pass
+
+        repaired = repair_json(text)
+        if repaired is not None:
+            return repaired
+        return None
 
     def save(self, state: dict[str, Any]) -> None:
         state["updated_at"] = self._now_iso()
