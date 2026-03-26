@@ -6,7 +6,7 @@
 
 ## 触发条件
 
-- push 到 `main` 且改动了：
+- push 到 `master` 或 `main` 且改动了：
   - `docs/**`
   - `mkdocs.yml`
   - `.github/workflows/docs.yml`
