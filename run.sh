@@ -11,3 +11,13 @@ mmw-agent run \
 mmw-agent resume \
   --task-id 20260325-165532-a339abdc \
   --output-dir outputs
+
+# ai_tutor mode example
+mmw-agent run \
+  --mode ai_tutor \
+  --problem-file example/ai_tutor/distributions.md \
+  --data-dir example/ai_tutor \
+  --output-dir outputs \
+  --jupyter-host 0.0.0.0 \
+  --jupyter-port 8888 \
+  --no-token

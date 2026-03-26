@@ -18,6 +18,7 @@ class WriterRoleAgent(RoleAgentBase):
         format_output: FormatOutPut = FormatOutPut.Markdown,
         cfg: Settings = settings,
         agent=None,
+        system_prompt: str | None = None,
     ):
         self.scholar = scholar
         self.comp_template = comp_template
@@ -26,7 +27,7 @@ class WriterRoleAgent(RoleAgentBase):
 
         super().__init__(
             role=AgentRole.WRITER,
-            system_prompt=get_writer_prompt(format_output=format_output),
+            system_prompt=system_prompt or get_writer_prompt(format_output=format_output),
             tools=[self.search_papers],
             cfg=cfg,
             agent_name="mmw-writer-agent",
@@ -55,4 +56,3 @@ class WriterRoleAgent(RoleAgentBase):
 
         response = self.agent.input(final_prompt, max_iterations=self.max_iterations)
         return WriterResponse(response_content=response, footnotes=[])
-

@@ -9,6 +9,9 @@
   - `Modeler Agent`：给出每题建模方案（JSON 输出）
   - `Coder Agent`：调用 `local_interpreter` 在 Jupyter Kernel 中执行代码
   - `Writer Agent`：调用 `openalex_scholar` 检索文献并生成 Markdown 论文内容
+- 支持两种工作模式：
+  - `competition`：数模赛题模式（默认）
+  - `ai_tutor`：教学模式（同样四角色，但流程和输出更偏教学实操）
 - 工作流输出：
   - `notebook.ipynb`（实时代码执行记录）
   - `res.json`（章节中间结果）
@@ -92,6 +95,7 @@ uv pip install -e .
 
 ```bash
 mmw-agent run \
+  --mode competition \
   --problem-file example/MCM-2017-C/Problem.md \
   --data-dir example/MCM-2017-C \
   --output-dir outputs \
@@ -99,6 +103,26 @@ mmw-agent run \
   --jupyter-port 8888 \
   --no-token
 ```
+
+### AI Tutor 模式
+
+适用于“本科生/初学者讲解 + 代码实操”的场景。示例：
+
+```bash
+mmw-agent run \
+  --mode ai_tutor \
+  --problem-file example/ai_tutor/distributions.md \
+  --data-dir example/ai_tutor \
+  --output-dir outputs \
+  --jupyter-host 0.0.0.0 \
+  --jupyter-port 8888 \
+  --no-token
+```
+
+`ai_tutor` 输出特点：
+- 统一生活化例子串讲概念
+- 代码与可视化实验优先
+- 最终产物是教学型 `notebook.ipynb` 和结构化教学 `res.md`
 
 运行后会打印：
 

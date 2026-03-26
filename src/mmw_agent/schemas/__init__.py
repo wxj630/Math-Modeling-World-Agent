@@ -4,13 +4,14 @@ from mmw_agent.schemas.a2a import (
     ModelerToCoder,
     WriterResponse,
 )
-from mmw_agent.schemas.enums import AgentRole, CompTemplate, FormatOutPut
+from mmw_agent.schemas.enums import AgentRole, CompTemplate, FormatOutPut, WorkflowMode
 from mmw_agent.schemas.request import Problem, WorkflowResult
 
 __all__ = [
     "AgentRole",
     "CompTemplate",
     "FormatOutPut",
+    "WorkflowMode",
     "Problem",
     "WorkflowResult",
     "CoordinatorToModeler",

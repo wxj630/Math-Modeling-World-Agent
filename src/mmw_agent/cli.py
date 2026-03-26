@@ -6,7 +6,7 @@ from pathlib import Path
 
 from mmw_agent.api import resume_math_modeling, run_math_modeling
 from mmw_agent.config import settings
-from mmw_agent.schemas import CompTemplate, FormatOutPut
+from mmw_agent.schemas import CompTemplate, FormatOutPut, WorkflowMode
 
 
 def _build_parser() -> argparse.ArgumentParser:
@@ -18,6 +18,7 @@ def _build_parser() -> argparse.ArgumentParser:
     run_parser.add_argument("--data-dir", required=True, help="Path to data directory")
     run_parser.add_argument("--output-dir", default=settings.DEFAULT_OUTPUT_DIR, help="Output root directory")
     run_parser.add_argument("--task-id", default=None, help="Optional task id")
+    run_parser.add_argument("--mode", default=WorkflowMode.COMPETITION.value, choices=[e.value for e in WorkflowMode])
     run_parser.add_argument("--comp-template", default=CompTemplate.CHINA.value, choices=[e.value for e in CompTemplate])
     run_parser.add_argument("--format-output", default=FormatOutPut.Markdown.value, choices=[e.value for e in FormatOutPut])
     run_parser.add_argument("--jupyter-host", default=settings.JUPYTER_HOST, help="Jupyter host")
@@ -59,6 +60,7 @@ def main(argv: list[str] | None = None) -> int:
             data_dir=args.data_dir,
             output_dir=args.output_dir,
             task_id=args.task_id,
+            mode=WorkflowMode(args.mode),
             comp_template=CompTemplate(args.comp_template),
             format_output=FormatOutPut(args.format_output),
             jupyter_host=args.jupyter_host,
@@ -81,6 +83,7 @@ def main(argv: list[str] | None = None) -> int:
         return 1
 
     print(f"Task ID: {result.task_id}")
+    print(f"Mode: {result.mode.value}")
     print(f"Resumed: {result.resumed}")
     print(f"Output Dir: {result.output_dir}")
     print(f"Notebook: {result.notebook_path}")

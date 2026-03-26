@@ -7,6 +7,7 @@ from mmw_agent.schemas import (
     FormatOutPut,
     ModelerToCoder,
     Problem,
+    WorkflowMode,
     WorkflowResult,
     WriterResponse,
 )
@@ -19,6 +20,7 @@ __all__ = [
     "WorkflowResult",
     "CompTemplate",
     "FormatOutPut",
+    "WorkflowMode",
     "CoordinatorToModeler",
     "ModelerToCoder",
     "CoderToWriter",

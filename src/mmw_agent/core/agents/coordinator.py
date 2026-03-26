@@ -10,10 +10,10 @@ from .base import RoleAgentBase
 
 
 class CoordinatorRoleAgent(RoleAgentBase):
-    def __init__(self, cfg: Settings = settings, agent=None):
+    def __init__(self, cfg: Settings = settings, agent=None, system_prompt: str | None = None):
         super().__init__(
             role=AgentRole.COORDINATOR,
-            system_prompt=COORDINATOR_PROMPT,
+            system_prompt=system_prompt or COORDINATOR_PROMPT,
             cfg=cfg,
             agent_name="mmw-coordinator-agent",
             agent=agent,
@@ -35,4 +35,3 @@ class CoordinatorRoleAgent(RoleAgentBase):
                     max_iterations=self.max_iterations,
                 )
         raise RuntimeError("Coordinator flow terminated unexpectedly")
-

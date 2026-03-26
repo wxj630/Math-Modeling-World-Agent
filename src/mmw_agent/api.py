@@ -5,7 +5,7 @@ from pathlib import Path
 from mmw_agent.config import Settings, settings
 from mmw_agent.core import MathModelWorkflow
 from mmw_agent.core.session_store import WorkflowSessionStore
-from mmw_agent.schemas import CompTemplate, FormatOutPut, Problem, WorkflowResult
+from mmw_agent.schemas import CompTemplate, FormatOutPut, Problem, WorkflowMode, WorkflowResult
 from mmw_agent.utils import create_task_id
 
 
@@ -15,6 +15,7 @@ def run_math_modeling(
     data_dir: str | Path,
     output_dir: str | Path | None = None,
     task_id: str | None = None,
+    mode: WorkflowMode = WorkflowMode.COMPETITION,
     comp_template: CompTemplate = CompTemplate.CHINA,
     format_output: FormatOutPut = FormatOutPut.Markdown,
     jupyter_host: str | None = None,
@@ -30,6 +31,7 @@ def run_math_modeling(
     problem = Problem(
         task_id=resolved_task_id,
         ques_all=problem_text,
+        mode=mode,
         comp_template=comp_template,
         format_output=format_output,
     )
@@ -71,6 +73,7 @@ def resume_math_modeling(
     problem = Problem(
         task_id=problem_payload["task_id"],
         ques_all=problem_payload["ques_all"],
+        mode=WorkflowMode(problem_payload.get("mode", WorkflowMode.COMPETITION.value)),
         comp_template=CompTemplate(problem_payload.get("comp_template", CompTemplate.CHINA.value)),
         format_output=FormatOutPut(problem_payload.get("format_output", FormatOutPut.Markdown.value)),
     )

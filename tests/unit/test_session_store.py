@@ -7,6 +7,7 @@ def test_session_store_save_and_load(tmp_path: Path):
     store = WorkflowSessionStore(work_dir=tmp_path)
     state = store.new_state(
         task_id="task-1",
+        mode="competition",
         problem_payload={"task_id": "task-1", "ques_all": "Q"},
         data_dir=str(tmp_path / "data"),
         output_dir=str(tmp_path),

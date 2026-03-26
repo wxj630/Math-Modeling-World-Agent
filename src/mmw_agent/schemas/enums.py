@@ -16,3 +16,8 @@ class AgentRole(str, Enum):
     MODELER = "modeler"
     CODER = "coder"
     WRITER = "writer"
+
+
+class WorkflowMode(str, Enum):
+    COMPETITION = "competition"
+    AI_TUTOR = "ai_tutor"

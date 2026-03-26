@@ -12,10 +12,10 @@ from .base import RoleAgentBase
 
 
 class ModelerRoleAgent(RoleAgentBase):
-    def __init__(self, cfg: Settings = settings, agent=None):
+    def __init__(self, cfg: Settings = settings, agent=None, system_prompt: str | None = None):
         super().__init__(
             role=AgentRole.MODELER,
-            system_prompt=MODELER_PROMPT,
+            system_prompt=system_prompt or MODELER_PROMPT,
             cfg=cfg,
             agent_name="mmw-modeler-agent",
             agent=agent,
@@ -38,4 +38,3 @@ class ModelerRoleAgent(RoleAgentBase):
             )
 
         raise ValueError(f"Modeler JSON parse failed after {max_retries + 1} attempts")
-

@@ -20,6 +20,7 @@ class WorkflowSessionStore:
         self,
         *,
         task_id: str,
+        mode: str,
         problem_payload: dict[str, Any],
         data_dir: str,
         output_dir: str,
@@ -28,6 +29,7 @@ class WorkflowSessionStore:
         return {
             "version": 1,
             "task_id": task_id,
+            "mode": mode,
             "problem": problem_payload,
             "data_dir": data_dir,
             "output_dir": output_dir,
@@ -37,6 +39,8 @@ class WorkflowSessionStore:
                 "modeler_done": False,
                 "solution_done_sections": [],
                 "write_done_sections": [],
+                "tutor_coder_done": False,
+                "tutor_writer_done": False,
                 "completed": False,
             },
             "artifacts": {
@@ -44,6 +48,13 @@ class WorkflowSessionStore:
                 "ques_count": None,
                 "modeler_questions_solution": None,
                 "user_output_res": {},
+                "tutor": {
+                    "coordinator_response": None,
+                    "modeler_response": None,
+                    "coder_response": None,
+                    "writer_response": None,
+                    "created_images": [],
+                },
             },
             "agent_sessions": {
                 "coordinator": None,
@@ -64,4 +75,3 @@ class WorkflowSessionStore:
         tmp_path = self.path.with_suffix(self.path.suffix + ".tmp")
         tmp_path.write_text(json.dumps(state, ensure_ascii=False, indent=2), encoding="utf-8")
         tmp_path.replace(self.path)
-

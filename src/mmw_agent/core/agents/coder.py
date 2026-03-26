@@ -20,6 +20,7 @@ class CoderRoleAgent(RoleAgentBase):
         work_dir: str,
         cfg: Settings = settings,
         agent=None,
+        system_prompt: str | None = None,
     ):
         self.code_interpreter = code_interpreter
         self.work_dir = work_dir
@@ -29,7 +30,7 @@ class CoderRoleAgent(RoleAgentBase):
 
         super().__init__(
             role=AgentRole.CODER,
-            system_prompt=CODER_PROMPT,
+            system_prompt=system_prompt or CODER_PROMPT,
             tools=[self.execute_code],
             cfg=cfg,
             agent_name="mmw-coder-agent",
@@ -97,4 +98,3 @@ class CoderRoleAgent(RoleAgentBase):
             code_output=self.code_interpreter.get_code_output(subtask_title),
             created_images=[],
         )
-
