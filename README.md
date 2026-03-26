@@ -164,6 +164,17 @@ print(result.model_dump())
 python -m pytest -q
 ```
 
+## 在线文档
+
+已提供完整 `docs/` 与 MkDocs 配置：
+
+```bash
+uv pip install -r docs/requirements.txt
+mkdocs serve
+```
+
+GitHub Pages 自动发布工作流见 `.github/workflows/docs.yml`。
+
 当前测试覆盖：
 
 - Coordinator / Modeler JSON 解析与重试

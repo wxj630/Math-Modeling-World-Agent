@@ -1,0 +1,45 @@
+site_name: Math Modeling World Agent Docs
+site_description: ConnectOnion-based Math Modeling Multi-Agent Backend Documentation
+site_url: https://wxj630.github.io/Math-Modeling-World-Agent/
+repo_name: Math-Modeling-World-Agent
+repo_url: https://github.com/wxj630/Math-Modeling-World-Agent
+
+theme:
+  name: material
+  language: zh
+  features:
+    - navigation.instant
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+
+markdown_extensions:
+  - admonition
+  - toc:
+      permalink: true
+  - pymdownx.superfences
+  - pymdownx.inlinehilite
+  - pymdownx.highlight
+  - pymdownx.details
+  - pymdownx.tabbed:
+      alternate_style: true
+
+nav:
+  - 首页: index.md
+  - 快速开始: quickstart.md
+  - 安装: installation.md
+  - 配置: configuration.md
+  - 使用指南:
+      - CLI: cli.md
+      - Python API: api.md
+      - Workflow: workflow.md
+      - 模式说明: modes.md
+  - 运行与运维:
+      - Session 断线恢复: session-resume.md
+      - Jupyter 与代码执行器: jupyter-and-interpreter.md
+      - 输出产物说明: outputs.md
+      - 故障排查: troubleshooting.md
+  - 在线文档部署:
+      - 本地预览: local-preview.md
+      - GitHub Pages 自动发布: deployment-github-pages.md
